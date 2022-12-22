@@ -1,0 +1,1415 @@
+
+Traffic_light_project.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000704  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000778  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000003  00800060  00800060  00000778  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  00000778  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000007a8  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 000001a0  00000000  00000000  000007e4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   0000183e  00000000  00000000  00000984  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000913  00000000  00000000  000021c2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   00000c82  00000000  00000000  00002ad5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  000002c8  00000000  00000000  00003758  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    00000649  00000000  00000000  00003a20  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    000006cc  00000000  00000000  00004069  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000120  00000000  00000000  00004735  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 22 03 	jmp	0x644	; 0x644 <__vector_1>
+   8:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  24:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_clear_bss>:
+  60:	20 e0       	ldi	r18, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
+
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	a3 36       	cpi	r26, 0x63	; 99
+  6c:	b2 07       	cpc	r27, r18
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 12 02 	call	0x424	; 0x424 <main>
+  74:	0c 94 80 03 	jmp	0x700	; 0x700 <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <APP_INIT>:
+u8 counter=0;
+u8 Global_mode_flag=0; // global flag to determine which mode to be executed when interrupt occurred flag 1 for red led and 2 for green and yellow
+/*App initialization for timer and interrupt and button and callback function within it*/
+void APP_INIT(void)
+{
+	Timer_Init();
+  7c:	0e 94 4f 03 	call	0x69e	; 0x69e <Timer_Init>
+	GIE_voidEnable();
+  80:	0e 94 4b 03 	call	0x696	; 0x696 <GIE_voidEnable>
+	EXTI_voidINT0Init();
+  84:	0e 94 0e 03 	call	0x61c	; 0x61c <EXTI_voidINT0Init>
+	BUTTON_Init();
+  88:	0e 94 79 01 	call	0x2f2	; 0x2f2 <BUTTON_Init>
+	EXTI_u8INT0SetCallBack(PEDESTRIAN_MODE);
+  8c:	8a e6       	ldi	r24, 0x6A	; 106
+  8e:	91 e0       	ldi	r25, 0x01	; 1
+  90:	0e 94 18 03 	call	0x630	; 0x630 <EXTI_u8INT0SetCallBack>
+  94:	08 95       	ret
+
+00000096 <NORMAL_MODE>:
+/*
+Cars' LEDs will be changed every five seconds starting from Green then yellow then red then yellow then Green.
+The Yellow LED will blink for five seconds before moving to Green or Red LEDs.
+*/
+void NORMAL_MODE(void)
+{
+  96:	cf 93       	push	r28
+	Global_mode_flag=2;
+  98:	c2 e0       	ldi	r28, 0x02	; 2
+  9a:	c0 93 60 00 	sts	0x0060, r28	; 0x800060 <__DATA_REGION_ORIGIN__>
+	Pedestrian_red_led(1);
+  9e:	81 e0       	ldi	r24, 0x01	; 1
+  a0:	0e 94 c7 01 	call	0x38e	; 0x38e <Pedestrian_red_led>
+	/*Enable led =1
+	Disable Led =0
+	Toggle Led = 2 */
+	Car_green_led(1);
+  a4:	81 e0       	ldi	r24, 0x01	; 1
+  a6:	0e 94 97 01 	call	0x32e	; 0x32e <Car_green_led>
+	Timer_delay(5);
+  aa:	85 e0       	ldi	r24, 0x05	; 5
+  ac:	90 e0       	ldi	r25, 0x00	; 0
+  ae:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_green_led(0);
+  b2:	80 e0       	ldi	r24, 0x00	; 0
+  b4:	0e 94 97 01 	call	0x32e	; 0x32e <Car_green_led>
+	
+	/*yellow led toggling*/
+	Car_yellow_led(1);
+  b8:	81 e0       	ldi	r24, 0x01	; 1
+  ba:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);
+  be:	81 e0       	ldi	r24, 0x01	; 1
+  c0:	90 e0       	ldi	r25, 0x00	; 0
+  c2:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+  c6:	80 e0       	ldi	r24, 0x00	; 0
+  c8:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);
+  cc:	81 e0       	ldi	r24, 0x01	; 1
+  ce:	90 e0       	ldi	r25, 0x00	; 0
+  d0:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+  d4:	81 e0       	ldi	r24, 0x01	; 1
+  d6:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);
+  da:	81 e0       	ldi	r24, 0x01	; 1
+  dc:	90 e0       	ldi	r25, 0x00	; 0
+  de:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+  e2:	80 e0       	ldi	r24, 0x00	; 0
+  e4:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);
+  e8:	81 e0       	ldi	r24, 0x01	; 1
+  ea:	90 e0       	ldi	r25, 0x00	; 0
+  ec:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+  f0:	81 e0       	ldi	r24, 0x01	; 1
+  f2:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);
+  f6:	81 e0       	ldi	r24, 0x01	; 1
+  f8:	90 e0       	ldi	r25, 0x00	; 0
+  fa:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+  fe:	80 e0       	ldi	r24, 0x00	; 0
+ 100:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Global_mode_flag=1;
+ 104:	81 e0       	ldi	r24, 0x01	; 1
+ 106:	80 93 60 00 	sts	0x0060, r24	; 0x800060 <__DATA_REGION_ORIGIN__>
+	Car_red_led(1);
+ 10a:	0e 94 7f 01 	call	0x2fe	; 0x2fe <Car_red_led>
+	Timer_delay(5);
+ 10e:	85 e0       	ldi	r24, 0x05	; 5
+ 110:	90 e0       	ldi	r25, 0x00	; 0
+ 112:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_red_led(0);
+ 116:	80 e0       	ldi	r24, 0x00	; 0
+ 118:	0e 94 7f 01 	call	0x2fe	; 0x2fe <Car_red_led>
+	Global_mode_flag=2;
+ 11c:	c0 93 60 00 	sts	0x0060, r28	; 0x800060 <__DATA_REGION_ORIGIN__>
+	
+	/*yellow led toggling*/
+	Car_yellow_led(1);
+ 120:	81 e0       	ldi	r24, 0x01	; 1
+ 122:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);   //first second
+ 126:	81 e0       	ldi	r24, 0x01	; 1
+ 128:	90 e0       	ldi	r25, 0x00	; 0
+ 12a:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 12e:	80 e0       	ldi	r24, 0x00	; 0
+ 130:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);  //2nd second
+ 134:	81 e0       	ldi	r24, 0x01	; 1
+ 136:	90 e0       	ldi	r25, 0x00	; 0
+ 138:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+ 13c:	81 e0       	ldi	r24, 0x01	; 1
+ 13e:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);   //third second
+ 142:	81 e0       	ldi	r24, 0x01	; 1
+ 144:	90 e0       	ldi	r25, 0x00	; 0
+ 146:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 14a:	80 e0       	ldi	r24, 0x00	; 0
+ 14c:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);   //fourth second
+ 150:	81 e0       	ldi	r24, 0x01	; 1
+ 152:	90 e0       	ldi	r25, 0x00	; 0
+ 154:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+ 158:	81 e0       	ldi	r24, 0x01	; 1
+ 15a:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Timer_delay(1);   //fifth second
+ 15e:	81 e0       	ldi	r24, 0x01	; 1
+ 160:	90 e0       	ldi	r25, 0x00	; 0
+ 162:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 166:	80 e0       	ldi	r24, 0x00	; 0
+ 168:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	
+}
+ 16c:	cf 91       	pop	r28
+ 16e:	08 95       	ret
+
+00000170 <CLOSE_MODE>:
+	}
+}
+/*Mode when Mode1 and Mode2 are totally finished to return to Normal mode safely*/
+void CLOSE_MODE(void)
+{
+	Car_red_led(0);
+ 170:	80 e0       	ldi	r24, 0x00	; 0
+ 172:	0e 94 7f 01 	call	0x2fe	; 0x2fe <Car_red_led>
+	Pedestrian_green_led(1);
+ 176:	81 e0       	ldi	r24, 0x01	; 1
+ 178:	0e 94 e0 01 	call	0x3c0	; 0x3c0 <Pedestrian_green_led>
+	
+	/*yellow led toggling for both cars and pedestrians*/
+	Car_yellow_led(1);
+ 17c:	81 e0       	ldi	r24, 0x01	; 1
+ 17e:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(1);
+ 182:	81 e0       	ldi	r24, 0x01	; 1
+ 184:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 188:	81 e0       	ldi	r24, 0x01	; 1
+ 18a:	90 e0       	ldi	r25, 0x00	; 0
+ 18c:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 190:	80 e0       	ldi	r24, 0x00	; 0
+ 192:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(0);
+ 196:	80 e0       	ldi	r24, 0x00	; 0
+ 198:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 19c:	81 e0       	ldi	r24, 0x01	; 1
+ 19e:	90 e0       	ldi	r25, 0x00	; 0
+ 1a0:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+ 1a4:	81 e0       	ldi	r24, 0x01	; 1
+ 1a6:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(1);
+ 1aa:	81 e0       	ldi	r24, 0x01	; 1
+ 1ac:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 1b0:	81 e0       	ldi	r24, 0x01	; 1
+ 1b2:	90 e0       	ldi	r25, 0x00	; 0
+ 1b4:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 1b8:	80 e0       	ldi	r24, 0x00	; 0
+ 1ba:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(0);
+ 1be:	80 e0       	ldi	r24, 0x00	; 0
+ 1c0:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 1c4:	81 e0       	ldi	r24, 0x01	; 1
+ 1c6:	90 e0       	ldi	r25, 0x00	; 0
+ 1c8:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+ 1cc:	81 e0       	ldi	r24, 0x01	; 1
+ 1ce:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(1);
+ 1d2:	81 e0       	ldi	r24, 0x01	; 1
+ 1d4:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 1d8:	81 e0       	ldi	r24, 0x01	; 1
+ 1da:	90 e0       	ldi	r25, 0x00	; 0
+ 1dc:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 1e0:	80 e0       	ldi	r24, 0x00	; 0
+ 1e2:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(0);
+ 1e6:	80 e0       	ldi	r24, 0x00	; 0
+ 1e8:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	
+	Pedestrian_green_led(0);
+ 1ec:	80 e0       	ldi	r24, 0x00	; 0
+ 1ee:	0e 94 e0 01 	call	0x3c0	; 0x3c0 <Pedestrian_green_led>
+	Pedestrian_red_led(1);
+ 1f2:	81 e0       	ldi	r24, 0x01	; 1
+ 1f4:	0e 94 c7 01 	call	0x38e	; 0x38e <Pedestrian_red_led>
+	Car_green_led(1);
+ 1f8:	81 e0       	ldi	r24, 0x01	; 1
+ 1fa:	0e 94 97 01 	call	0x32e	; 0x32e <Car_green_led>
+	NORMAL_MODE();
+ 1fe:	0e 94 4b 00 	call	0x96	; 0x96 <NORMAL_MODE>
+ 202:	08 95       	ret
+
+00000204 <Mode_1>:
+	
+}
+/*mode 1 if button pressed and car red led is on (global_mode_flag =1)*/
+void Mode_1(void)
+{
+	Pedestrian_red_led(0);
+ 204:	80 e0       	ldi	r24, 0x00	; 0
+ 206:	0e 94 c7 01 	call	0x38e	; 0x38e <Pedestrian_red_led>
+	Pedestrian_green_led(1);
+ 20a:	81 e0       	ldi	r24, 0x01	; 1
+ 20c:	0e 94 e0 01 	call	0x3c0	; 0x3c0 <Pedestrian_green_led>
+	Car_red_led(1);
+ 210:	81 e0       	ldi	r24, 0x01	; 1
+ 212:	0e 94 7f 01 	call	0x2fe	; 0x2fe <Car_red_led>
+	Timer_delay(5);
+ 216:	85 e0       	ldi	r24, 0x05	; 5
+ 218:	90 e0       	ldi	r25, 0x00	; 0
+ 21a:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Pedestrian_green_led(0);
+ 21e:	80 e0       	ldi	r24, 0x00	; 0
+ 220:	0e 94 e0 01 	call	0x3c0	; 0x3c0 <Pedestrian_green_led>
+	Car_red_led(1);
+ 224:	81 e0       	ldi	r24, 0x01	; 1
+ 226:	0e 94 7f 01 	call	0x2fe	; 0x2fe <Car_red_led>
+	CLOSE_MODE();
+ 22a:	0e 94 b8 00 	call	0x170	; 0x170 <CLOSE_MODE>
+ 22e:	08 95       	ret
+
+00000230 <Mode_2>:
+}
+/*mode 2 if pressed when car green led on or yellow led is blinking (global_mode_flag =2)*/
+void Mode_2(void)
+{
+	Pedestrian_red_led(1);
+ 230:	81 e0       	ldi	r24, 0x01	; 1
+ 232:	0e 94 c7 01 	call	0x38e	; 0x38e <Pedestrian_red_led>
+	Timer_delay(5);
+ 236:	85 e0       	ldi	r24, 0x05	; 5
+ 238:	90 e0       	ldi	r25, 0x00	; 0
+ 23a:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_green_led(0);
+ 23e:	80 e0       	ldi	r24, 0x00	; 0
+ 240:	0e 94 97 01 	call	0x32e	; 0x32e <Car_green_led>
+	Pedestrian_red_led(0);
+ 244:	80 e0       	ldi	r24, 0x00	; 0
+ 246:	0e 94 c7 01 	call	0x38e	; 0x38e <Pedestrian_red_led>
+	
+	/*yellow led toggling for both cars and pedestrians*/
+	Car_yellow_led(1);
+ 24a:	81 e0       	ldi	r24, 0x01	; 1
+ 24c:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(1);
+ 250:	81 e0       	ldi	r24, 0x01	; 1
+ 252:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 256:	81 e0       	ldi	r24, 0x01	; 1
+ 258:	90 e0       	ldi	r25, 0x00	; 0
+ 25a:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 25e:	80 e0       	ldi	r24, 0x00	; 0
+ 260:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(0);
+ 264:	80 e0       	ldi	r24, 0x00	; 0
+ 266:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 26a:	81 e0       	ldi	r24, 0x01	; 1
+ 26c:	90 e0       	ldi	r25, 0x00	; 0
+ 26e:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+ 272:	81 e0       	ldi	r24, 0x01	; 1
+ 274:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(1);
+ 278:	81 e0       	ldi	r24, 0x01	; 1
+ 27a:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 27e:	81 e0       	ldi	r24, 0x01	; 1
+ 280:	90 e0       	ldi	r25, 0x00	; 0
+ 282:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 286:	80 e0       	ldi	r24, 0x00	; 0
+ 288:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(0);
+ 28c:	80 e0       	ldi	r24, 0x00	; 0
+ 28e:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 292:	81 e0       	ldi	r24, 0x01	; 1
+ 294:	90 e0       	ldi	r25, 0x00	; 0
+ 296:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(1);
+ 29a:	81 e0       	ldi	r24, 0x01	; 1
+ 29c:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(1);
+ 2a0:	81 e0       	ldi	r24, 0x01	; 1
+ 2a2:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	Timer_delay(1);
+ 2a6:	81 e0       	ldi	r24, 0x01	; 1
+ 2a8:	90 e0       	ldi	r25, 0x00	; 0
+ 2aa:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	Car_yellow_led(0);
+ 2ae:	80 e0       	ldi	r24, 0x00	; 0
+ 2b0:	0e 94 af 01 	call	0x35e	; 0x35e <Car_yellow_led>
+	Pedestrian_yellow_led(0);
+ 2b4:	80 e0       	ldi	r24, 0x00	; 0
+ 2b6:	0e 94 f9 01 	call	0x3f2	; 0x3f2 <Pedestrian_yellow_led>
+	
+	Car_red_led(1);
+ 2ba:	81 e0       	ldi	r24, 0x01	; 1
+ 2bc:	0e 94 7f 01 	call	0x2fe	; 0x2fe <Car_red_led>
+	Pedestrian_green_led(1);
+ 2c0:	81 e0       	ldi	r24, 0x01	; 1
+ 2c2:	0e 94 e0 01 	call	0x3c0	; 0x3c0 <Pedestrian_green_led>
+	Timer_delay(5);
+ 2c6:	85 e0       	ldi	r24, 0x05	; 5
+ 2c8:	90 e0       	ldi	r25, 0x00	; 0
+ 2ca:	0e 94 60 03 	call	0x6c0	; 0x6c0 <Timer_delay>
+	CLOSE_MODE();
+ 2ce:	0e 94 b8 00 	call	0x170	; 0x170 <CLOSE_MODE>
+ 2d2:	08 95       	ret
+
+000002d4 <PEDESTRIAN_MODE>:
+}
+/*Pedestrian mode when Push button is pressed implementation */
+void PEDESTRIAN_MODE(void)
+{
+	if(Global_mode_flag==1)
+ 2d4:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 2d8:	81 30       	cpi	r24, 0x01	; 1
+ 2da:	19 f4       	brne	.+6      	; 0x2e2 <PEDESTRIAN_MODE+0xe>
+	{
+		Mode_1();
+ 2dc:	0e 94 02 01 	call	0x204	; 0x204 <Mode_1>
+ 2e0:	08 95       	ret
+	}
+	else if(Global_mode_flag == 2)
+ 2e2:	82 30       	cpi	r24, 0x02	; 2
+ 2e4:	11 f4       	brne	.+4      	; 0x2ea <PEDESTRIAN_MODE+0x16>
+	{
+		Mode_2();
+ 2e6:	0e 94 18 01 	call	0x230	; 0x230 <Mode_2>
+ 2ea:	08 95       	ret
+
+000002ec <APP_START>:
+	NORMAL_MODE();
+}
+/*calling Normal mode in app start to start program with it*/
+void APP_START(void)
+{
+	NORMAL_MODE();
+ 2ec:	0e 94 4b 00 	call	0x96	; 0x96 <NORMAL_MODE>
+ 2f0:	08 95       	ret
+
+000002f2 <BUTTON_Init>:
+
+u8 PIN_VALUE;
+/*Initialize pin direction for button*/
+void BUTTON_Init(void)
+{
+	DIO_u8SetPinDirection(DIO_u8PORTD,DIO_u8PIN2,DIO_u8PIN_INPUT);
+ 2f2:	40 e0       	ldi	r20, 0x00	; 0
+ 2f4:	62 e0       	ldi	r22, 0x02	; 2
+ 2f6:	83 e0       	ldi	r24, 0x03	; 3
+ 2f8:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+ 2fc:	08 95       	ret
+
+000002fe <Car_red_led>:
+#include"../../MCAL/DIO/DIO_Interface.h"
+
+
+/*Traffic light LEDS*/
+void Car_red_led(u8 Led_Status)
+{
+ 2fe:	cf 93       	push	r28
+ 300:	c8 2f       	mov	r28, r24
+	DIO_u8SetPinDirection(DIO_u8PORTA,DIO_u8PIN0,DIO_u8PIN_OUTPUT);
+ 302:	41 e0       	ldi	r20, 0x01	; 1
+ 304:	60 e0       	ldi	r22, 0x00	; 0
+ 306:	80 e0       	ldi	r24, 0x00	; 0
+ 308:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+	if(Led_Status == ENABLE_LED)
+ 30c:	c1 30       	cpi	r28, 0x01	; 1
+ 30e:	31 f4       	brne	.+12     	; 0x31c <Car_red_led+0x1e>
+	{
+		DIO_u8SetPinValue(DIO_u8PORTA,DIO_u8PIN0,DIO_u8PIN_HIGH);
+ 310:	41 e0       	ldi	r20, 0x01	; 1
+ 312:	60 e0       	ldi	r22, 0x00	; 0
+ 314:	80 e0       	ldi	r24, 0x00	; 0
+ 316:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 31a:	07 c0       	rjmp	.+14     	; 0x32a <Car_red_led+0x2c>
+	}
+	else if(Led_Status == DISABLE_LED)
+ 31c:	c1 11       	cpse	r28, r1
+ 31e:	05 c0       	rjmp	.+10     	; 0x32a <Car_red_led+0x2c>
+	{
+		DIO_u8SetPinValue(DIO_u8PORTA,DIO_u8PIN0,DIO_u8PIN_LOW);
+ 320:	40 e0       	ldi	r20, 0x00	; 0
+ 322:	60 e0       	ldi	r22, 0x00	; 0
+ 324:	80 e0       	ldi	r24, 0x00	; 0
+ 326:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+	}
+	else
+	{
+		//do nothing
+	}
+}
+ 32a:	cf 91       	pop	r28
+ 32c:	08 95       	ret
+
+0000032e <Car_green_led>:
+void Car_green_led(u8 Led_Status)
+{
+ 32e:	cf 93       	push	r28
+ 330:	c8 2f       	mov	r28, r24
+	DIO_u8SetPinDirection(DIO_u8PORTA,DIO_u8PIN2,DIO_u8PIN_OUTPUT);
+ 332:	41 e0       	ldi	r20, 0x01	; 1
+ 334:	62 e0       	ldi	r22, 0x02	; 2
+ 336:	80 e0       	ldi	r24, 0x00	; 0
+ 338:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+	if(Led_Status == ENABLE_LED)
+ 33c:	c1 30       	cpi	r28, 0x01	; 1
+ 33e:	31 f4       	brne	.+12     	; 0x34c <Car_green_led+0x1e>
+	{
+		DIO_u8SetPinValue(DIO_u8PORTA,DIO_u8PIN2,DIO_u8PIN_HIGH);
+ 340:	41 e0       	ldi	r20, 0x01	; 1
+ 342:	62 e0       	ldi	r22, 0x02	; 2
+ 344:	80 e0       	ldi	r24, 0x00	; 0
+ 346:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 34a:	07 c0       	rjmp	.+14     	; 0x35a <Car_green_led+0x2c>
+	}
+	else if(Led_Status == DISABLE_LED)
+ 34c:	c1 11       	cpse	r28, r1
+ 34e:	05 c0       	rjmp	.+10     	; 0x35a <Car_green_led+0x2c>
+	{
+		DIO_u8SetPinValue(DIO_u8PORTA,DIO_u8PIN2,DIO_u8PIN_LOW);
+ 350:	40 e0       	ldi	r20, 0x00	; 0
+ 352:	62 e0       	ldi	r22, 0x02	; 2
+ 354:	80 e0       	ldi	r24, 0x00	; 0
+ 356:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+	}
+	else
+	{
+		//do nothing
+	}
+}
+ 35a:	cf 91       	pop	r28
+ 35c:	08 95       	ret
+
+0000035e <Car_yellow_led>:
+void Car_yellow_led(u8 Led_Status)
+{
+ 35e:	cf 93       	push	r28
+ 360:	c8 2f       	mov	r28, r24
+	DIO_u8SetPinDirection(DIO_u8PORTA,DIO_u8PIN1,DIO_u8PIN_OUTPUT);
+ 362:	41 e0       	ldi	r20, 0x01	; 1
+ 364:	61 e0       	ldi	r22, 0x01	; 1
+ 366:	80 e0       	ldi	r24, 0x00	; 0
+ 368:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+	if(Led_Status == ENABLE_LED)
+ 36c:	c1 30       	cpi	r28, 0x01	; 1
+ 36e:	31 f4       	brne	.+12     	; 0x37c <Car_yellow_led+0x1e>
+	{
+		//TOG_BIT(DIO_u8PORTA,DIO_u8PIN1);
+		DIO_u8SetPinValue(DIO_u8PORTA,DIO_u8PIN1,DIO_u8PIN_HIGH);
+ 370:	41 e0       	ldi	r20, 0x01	; 1
+ 372:	61 e0       	ldi	r22, 0x01	; 1
+ 374:	80 e0       	ldi	r24, 0x00	; 0
+ 376:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 37a:	07 c0       	rjmp	.+14     	; 0x38a <Car_yellow_led+0x2c>
+
+	}
+	else if(Led_Status == DISABLE_LED)
+ 37c:	c1 11       	cpse	r28, r1
+ 37e:	05 c0       	rjmp	.+10     	; 0x38a <Car_yellow_led+0x2c>
+	{
+		DIO_u8SetPinValue(DIO_u8PORTA,DIO_u8PIN1,DIO_u8PIN_LOW);
+ 380:	40 e0       	ldi	r20, 0x00	; 0
+ 382:	61 e0       	ldi	r22, 0x01	; 1
+ 384:	80 e0       	ldi	r24, 0x00	; 0
+ 386:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+	}
+	else
+	{
+		//do nothing
+	}
+}
+ 38a:	cf 91       	pop	r28
+ 38c:	08 95       	ret
+
+0000038e <Pedestrian_red_led>:
+/*************************************************************/
+/*Pedestrian light LEDS*/
+
+void Pedestrian_red_led(u8 Led_Status)
+{
+	if(Led_Status == ENABLE_LED)
+ 38e:	81 30       	cpi	r24, 0x01	; 1
+ 390:	51 f4       	brne	.+20     	; 0x3a6 <Pedestrian_red_led+0x18>
+	{
+		DIO_u8SetPinDirection(DIO_u8PORTB,DIO_u8PIN0,DIO_u8PIN_OUTPUT);
+ 392:	41 e0       	ldi	r20, 0x01	; 1
+ 394:	60 e0       	ldi	r22, 0x00	; 0
+ 396:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+		DIO_u8SetPinValue(DIO_u8PORTB,DIO_u8PIN0,DIO_u8PIN_HIGH);
+ 39a:	41 e0       	ldi	r20, 0x01	; 1
+ 39c:	60 e0       	ldi	r22, 0x00	; 0
+ 39e:	81 e0       	ldi	r24, 0x01	; 1
+ 3a0:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 3a4:	08 95       	ret
+	}
+	else if(Led_Status == DISABLE_LED)
+ 3a6:	81 11       	cpse	r24, r1
+ 3a8:	0a c0       	rjmp	.+20     	; 0x3be <Pedestrian_red_led+0x30>
+	{
+		DIO_u8SetPinDirection(DIO_u8PORTB,DIO_u8PIN0,DIO_u8PIN_OUTPUT);
+ 3aa:	41 e0       	ldi	r20, 0x01	; 1
+ 3ac:	60 e0       	ldi	r22, 0x00	; 0
+ 3ae:	81 e0       	ldi	r24, 0x01	; 1
+ 3b0:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+		DIO_u8SetPinValue(DIO_u8PORTB,DIO_u8PIN0,DIO_u8PIN_LOW);
+ 3b4:	40 e0       	ldi	r20, 0x00	; 0
+ 3b6:	60 e0       	ldi	r22, 0x00	; 0
+ 3b8:	81 e0       	ldi	r24, 0x01	; 1
+ 3ba:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 3be:	08 95       	ret
+
+000003c0 <Pedestrian_green_led>:
+		//do nothing
+	}
+}
+void Pedestrian_green_led(u8 Led_Status)
+{
+	if(Led_Status == ENABLE_LED)
+ 3c0:	81 30       	cpi	r24, 0x01	; 1
+ 3c2:	51 f4       	brne	.+20     	; 0x3d8 <Pedestrian_green_led+0x18>
+	{
+		DIO_u8SetPinDirection(DIO_u8PORTB,DIO_u8PIN2,DIO_u8PIN_OUTPUT);
+ 3c4:	41 e0       	ldi	r20, 0x01	; 1
+ 3c6:	62 e0       	ldi	r22, 0x02	; 2
+ 3c8:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+		DIO_u8SetPinValue(DIO_u8PORTB,DIO_u8PIN2,DIO_u8PIN_HIGH);
+ 3cc:	41 e0       	ldi	r20, 0x01	; 1
+ 3ce:	62 e0       	ldi	r22, 0x02	; 2
+ 3d0:	81 e0       	ldi	r24, 0x01	; 1
+ 3d2:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 3d6:	08 95       	ret
+	}
+	else if(Led_Status == DISABLE_LED)
+ 3d8:	81 11       	cpse	r24, r1
+ 3da:	0a c0       	rjmp	.+20     	; 0x3f0 <Pedestrian_green_led+0x30>
+	{
+		DIO_u8SetPinDirection(DIO_u8PORTB,DIO_u8PIN2,DIO_u8PIN_OUTPUT);
+ 3dc:	41 e0       	ldi	r20, 0x01	; 1
+ 3de:	62 e0       	ldi	r22, 0x02	; 2
+ 3e0:	81 e0       	ldi	r24, 0x01	; 1
+ 3e2:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+		DIO_u8SetPinValue(DIO_u8PORTB,DIO_u8PIN2,DIO_u8PIN_LOW);
+ 3e6:	40 e0       	ldi	r20, 0x00	; 0
+ 3e8:	62 e0       	ldi	r22, 0x02	; 2
+ 3ea:	81 e0       	ldi	r24, 0x01	; 1
+ 3ec:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 3f0:	08 95       	ret
+
+000003f2 <Pedestrian_yellow_led>:
+		//do nothing
+	}
+}
+void Pedestrian_yellow_led(u8 Led_Status)
+{
+	if(Led_Status == ENABLE_LED)
+ 3f2:	81 30       	cpi	r24, 0x01	; 1
+ 3f4:	51 f4       	brne	.+20     	; 0x40a <__EEPROM_REGION_LENGTH__+0xa>
+	{
+		DIO_u8SetPinDirection(DIO_u8PORTB,DIO_u8PIN1,DIO_u8PIN_OUTPUT);
+ 3f6:	41 e0       	ldi	r20, 0x01	; 1
+ 3f8:	61 e0       	ldi	r22, 0x01	; 1
+ 3fa:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+		//TOG_BIT(DIO_u8PORTA,DIO_u8PIN5);
+		DIO_u8SetPinValue(DIO_u8PORTB,DIO_u8PIN1,DIO_u8PIN_HIGH);
+ 3fe:	41 e0       	ldi	r20, 0x01	; 1
+ 400:	61 e0       	ldi	r22, 0x01	; 1
+ 402:	81 e0       	ldi	r24, 0x01	; 1
+ 404:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 408:	08 95       	ret
+
+	}
+	else if(Led_Status == DISABLE_LED)
+ 40a:	81 11       	cpse	r24, r1
+ 40c:	0a c0       	rjmp	.+20     	; 0x422 <__EEPROM_REGION_LENGTH__+0x22>
+	{
+		DIO_u8SetPinDirection(DIO_u8PORTB,DIO_u8PIN1,DIO_u8PIN_OUTPUT);
+ 40e:	41 e0       	ldi	r20, 0x01	; 1
+ 410:	61 e0       	ldi	r22, 0x01	; 1
+ 412:	81 e0       	ldi	r24, 0x01	; 1
+ 414:	0e 94 17 02 	call	0x42e	; 0x42e <DIO_u8SetPinDirection>
+		DIO_u8SetPinValue(DIO_u8PORTB,DIO_u8PIN1,DIO_u8PIN_LOW);
+ 418:	40 e0       	ldi	r20, 0x00	; 0
+ 41a:	61 e0       	ldi	r22, 0x01	; 1
+ 41c:	81 e0       	ldi	r24, 0x01	; 1
+ 41e:	0e 94 8b 02 	call	0x516	; 0x516 <DIO_u8SetPinValue>
+ 422:	08 95       	ret
+
+00000424 <main>:
+#include"APPLICATION/Application.h"
+
+int main(void)
+{
+	/*App initialization for timer,interrupt,button,leds and call back function*/
+	APP_INIT();
+ 424:	0e 94 3e 00 	call	0x7c	; 0x7c <APP_INIT>
+
+
+    while (1) 
+    {
+		/*Start Normal mode*/
+		APP_START();
+ 428:	0e 94 76 01 	call	0x2ec	; 0x2ec <APP_START>
+ 42c:	fd cf       	rjmp	.-6      	; 0x428 <main+0x4>
+
+0000042e <DIO_u8SetPinDirection>:
+	case DIO_u8PORTC: DDRC = Copy_u8Direction; break;
+	case DIO_u8PORTD: DDRD = Copy_u8Direction; break;
+
+	}
+	return Local_u8ErrorState;
+}
+ 42e:	68 30       	cpi	r22, 0x08	; 8
+ 430:	08 f0       	brcs	.+2      	; 0x434 <DIO_u8SetPinDirection+0x6>
+ 432:	6f c0       	rjmp	.+222    	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 434:	41 11       	cpse	r20, r1
+ 436:	38 c0       	rjmp	.+112    	; 0x4a8 <DIO_u8SetPinDirection+0x7a>
+ 438:	81 30       	cpi	r24, 0x01	; 1
+ 43a:	91 f0       	breq	.+36     	; 0x460 <DIO_u8SetPinDirection+0x32>
+ 43c:	28 f0       	brcs	.+10     	; 0x448 <DIO_u8SetPinDirection+0x1a>
+ 43e:	82 30       	cpi	r24, 0x02	; 2
+ 440:	d9 f0       	breq	.+54     	; 0x478 <DIO_u8SetPinDirection+0x4a>
+ 442:	83 30       	cpi	r24, 0x03	; 3
+ 444:	29 f1       	breq	.+74     	; 0x490 <DIO_u8SetPinDirection+0x62>
+ 446:	65 c0       	rjmp	.+202    	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 448:	2a b3       	in	r18, 0x1a	; 26
+ 44a:	81 e0       	ldi	r24, 0x01	; 1
+ 44c:	90 e0       	ldi	r25, 0x00	; 0
+ 44e:	02 c0       	rjmp	.+4      	; 0x454 <DIO_u8SetPinDirection+0x26>
+ 450:	88 0f       	add	r24, r24
+ 452:	99 1f       	adc	r25, r25
+ 454:	6a 95       	dec	r22
+ 456:	e2 f7       	brpl	.-8      	; 0x450 <DIO_u8SetPinDirection+0x22>
+ 458:	80 95       	com	r24
+ 45a:	82 23       	and	r24, r18
+ 45c:	8a bb       	out	0x1a, r24	; 26
+ 45e:	59 c0       	rjmp	.+178    	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 460:	27 b3       	in	r18, 0x17	; 23
+ 462:	81 e0       	ldi	r24, 0x01	; 1
+ 464:	90 e0       	ldi	r25, 0x00	; 0
+ 466:	02 c0       	rjmp	.+4      	; 0x46c <DIO_u8SetPinDirection+0x3e>
+ 468:	88 0f       	add	r24, r24
+ 46a:	99 1f       	adc	r25, r25
+ 46c:	6a 95       	dec	r22
+ 46e:	e2 f7       	brpl	.-8      	; 0x468 <DIO_u8SetPinDirection+0x3a>
+ 470:	80 95       	com	r24
+ 472:	82 23       	and	r24, r18
+ 474:	87 bb       	out	0x17, r24	; 23
+ 476:	4d c0       	rjmp	.+154    	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 478:	24 b3       	in	r18, 0x14	; 20
+ 47a:	81 e0       	ldi	r24, 0x01	; 1
+ 47c:	90 e0       	ldi	r25, 0x00	; 0
+ 47e:	02 c0       	rjmp	.+4      	; 0x484 <DIO_u8SetPinDirection+0x56>
+ 480:	88 0f       	add	r24, r24
+ 482:	99 1f       	adc	r25, r25
+ 484:	6a 95       	dec	r22
+ 486:	e2 f7       	brpl	.-8      	; 0x480 <DIO_u8SetPinDirection+0x52>
+ 488:	80 95       	com	r24
+ 48a:	82 23       	and	r24, r18
+ 48c:	84 bb       	out	0x14, r24	; 20
+ 48e:	41 c0       	rjmp	.+130    	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 490:	21 b3       	in	r18, 0x11	; 17
+ 492:	81 e0       	ldi	r24, 0x01	; 1
+ 494:	90 e0       	ldi	r25, 0x00	; 0
+ 496:	02 c0       	rjmp	.+4      	; 0x49c <DIO_u8SetPinDirection+0x6e>
+ 498:	88 0f       	add	r24, r24
+ 49a:	99 1f       	adc	r25, r25
+ 49c:	6a 95       	dec	r22
+ 49e:	e2 f7       	brpl	.-8      	; 0x498 <DIO_u8SetPinDirection+0x6a>
+ 4a0:	80 95       	com	r24
+ 4a2:	82 23       	and	r24, r18
+ 4a4:	81 bb       	out	0x11, r24	; 17
+ 4a6:	35 c0       	rjmp	.+106    	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 4a8:	41 30       	cpi	r20, 0x01	; 1
+ 4aa:	99 f5       	brne	.+102    	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 4ac:	81 30       	cpi	r24, 0x01	; 1
+ 4ae:	89 f0       	breq	.+34     	; 0x4d2 <DIO_u8SetPinDirection+0xa4>
+ 4b0:	28 f0       	brcs	.+10     	; 0x4bc <DIO_u8SetPinDirection+0x8e>
+ 4b2:	82 30       	cpi	r24, 0x02	; 2
+ 4b4:	c9 f0       	breq	.+50     	; 0x4e8 <DIO_u8SetPinDirection+0xba>
+ 4b6:	83 30       	cpi	r24, 0x03	; 3
+ 4b8:	11 f1       	breq	.+68     	; 0x4fe <DIO_u8SetPinDirection+0xd0>
+ 4ba:	2b c0       	rjmp	.+86     	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 4bc:	2a b3       	in	r18, 0x1a	; 26
+ 4be:	81 e0       	ldi	r24, 0x01	; 1
+ 4c0:	90 e0       	ldi	r25, 0x00	; 0
+ 4c2:	02 c0       	rjmp	.+4      	; 0x4c8 <DIO_u8SetPinDirection+0x9a>
+ 4c4:	88 0f       	add	r24, r24
+ 4c6:	99 1f       	adc	r25, r25
+ 4c8:	6a 95       	dec	r22
+ 4ca:	e2 f7       	brpl	.-8      	; 0x4c4 <DIO_u8SetPinDirection+0x96>
+ 4cc:	82 2b       	or	r24, r18
+ 4ce:	8a bb       	out	0x1a, r24	; 26
+ 4d0:	20 c0       	rjmp	.+64     	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 4d2:	27 b3       	in	r18, 0x17	; 23
+ 4d4:	81 e0       	ldi	r24, 0x01	; 1
+ 4d6:	90 e0       	ldi	r25, 0x00	; 0
+ 4d8:	02 c0       	rjmp	.+4      	; 0x4de <DIO_u8SetPinDirection+0xb0>
+ 4da:	88 0f       	add	r24, r24
+ 4dc:	99 1f       	adc	r25, r25
+ 4de:	6a 95       	dec	r22
+ 4e0:	e2 f7       	brpl	.-8      	; 0x4da <DIO_u8SetPinDirection+0xac>
+ 4e2:	82 2b       	or	r24, r18
+ 4e4:	87 bb       	out	0x17, r24	; 23
+ 4e6:	15 c0       	rjmp	.+42     	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 4e8:	24 b3       	in	r18, 0x14	; 20
+ 4ea:	81 e0       	ldi	r24, 0x01	; 1
+ 4ec:	90 e0       	ldi	r25, 0x00	; 0
+ 4ee:	02 c0       	rjmp	.+4      	; 0x4f4 <DIO_u8SetPinDirection+0xc6>
+ 4f0:	88 0f       	add	r24, r24
+ 4f2:	99 1f       	adc	r25, r25
+ 4f4:	6a 95       	dec	r22
+ 4f6:	e2 f7       	brpl	.-8      	; 0x4f0 <DIO_u8SetPinDirection+0xc2>
+ 4f8:	82 2b       	or	r24, r18
+ 4fa:	84 bb       	out	0x14, r24	; 20
+ 4fc:	0a c0       	rjmp	.+20     	; 0x512 <DIO_u8SetPinDirection+0xe4>
+ 4fe:	21 b3       	in	r18, 0x11	; 17
+ 500:	81 e0       	ldi	r24, 0x01	; 1
+ 502:	90 e0       	ldi	r25, 0x00	; 0
+ 504:	02 c0       	rjmp	.+4      	; 0x50a <DIO_u8SetPinDirection+0xdc>
+ 506:	88 0f       	add	r24, r24
+ 508:	99 1f       	adc	r25, r25
+ 50a:	6a 95       	dec	r22
+ 50c:	e2 f7       	brpl	.-8      	; 0x506 <DIO_u8SetPinDirection+0xd8>
+ 50e:	82 2b       	or	r24, r18
+ 510:	81 bb       	out	0x11, r24	; 17
+ 512:	80 e0       	ldi	r24, 0x00	; 0
+ 514:	08 95       	ret
+
+00000516 <DIO_u8SetPinValue>:
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+	if(Copy_u8Pin<= DIO_u8PIN7)
+ 516:	68 30       	cpi	r22, 0x08	; 8
+ 518:	08 f0       	brcs	.+2      	; 0x51c <DIO_u8SetPinValue+0x6>
+ 51a:	78 c0       	rjmp	.+240    	; 0x60c <DIO_u8SetPinValue+0xf6>
+		{
+			if(Copy_u8Value==DIO_u8PIN_LOW)
+ 51c:	41 11       	cpse	r20, r1
+ 51e:	3c c0       	rjmp	.+120    	; 0x598 <DIO_u8SetPinValue+0x82>
+			{
+				switch(Copy_u8Port)
+ 520:	81 30       	cpi	r24, 0x01	; 1
+ 522:	99 f0       	breq	.+38     	; 0x54a <DIO_u8SetPinValue+0x34>
+ 524:	28 f0       	brcs	.+10     	; 0x530 <DIO_u8SetPinValue+0x1a>
+ 526:	82 30       	cpi	r24, 0x02	; 2
+ 528:	e9 f0       	breq	.+58     	; 0x564 <DIO_u8SetPinValue+0x4e>
+ 52a:	83 30       	cpi	r24, 0x03	; 3
+ 52c:	41 f1       	breq	.+80     	; 0x57e <DIO_u8SetPinValue+0x68>
+ 52e:	70 c0       	rjmp	.+224    	; 0x610 <DIO_u8SetPinValue+0xfa>
+				{
+				case DIO_u8PORTA: CLR_BIT(PORTA,Copy_u8Pin); break;
+ 530:	2b b3       	in	r18, 0x1b	; 27
+ 532:	81 e0       	ldi	r24, 0x01	; 1
+ 534:	90 e0       	ldi	r25, 0x00	; 0
+ 536:	02 c0       	rjmp	.+4      	; 0x53c <DIO_u8SetPinValue+0x26>
+ 538:	88 0f       	add	r24, r24
+ 53a:	99 1f       	adc	r25, r25
+ 53c:	6a 95       	dec	r22
+ 53e:	e2 f7       	brpl	.-8      	; 0x538 <DIO_u8SetPinValue+0x22>
+ 540:	80 95       	com	r24
+ 542:	82 23       	and	r24, r18
+ 544:	8b bb       	out	0x1b, r24	; 27
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 546:	80 e0       	ldi	r24, 0x00	; 0
+		{
+			if(Copy_u8Value==DIO_u8PIN_LOW)
+			{
+				switch(Copy_u8Port)
+				{
+				case DIO_u8PORTA: CLR_BIT(PORTA,Copy_u8Pin); break;
+ 548:	08 95       	ret
+				case DIO_u8PORTB: CLR_BIT(PORTB,Copy_u8Pin); break;
+ 54a:	28 b3       	in	r18, 0x18	; 24
+ 54c:	81 e0       	ldi	r24, 0x01	; 1
+ 54e:	90 e0       	ldi	r25, 0x00	; 0
+ 550:	02 c0       	rjmp	.+4      	; 0x556 <DIO_u8SetPinValue+0x40>
+ 552:	88 0f       	add	r24, r24
+ 554:	99 1f       	adc	r25, r25
+ 556:	6a 95       	dec	r22
+ 558:	e2 f7       	brpl	.-8      	; 0x552 <DIO_u8SetPinValue+0x3c>
+ 55a:	80 95       	com	r24
+ 55c:	82 23       	and	r24, r18
+ 55e:	88 bb       	out	0x18, r24	; 24
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 560:	80 e0       	ldi	r24, 0x00	; 0
+			if(Copy_u8Value==DIO_u8PIN_LOW)
+			{
+				switch(Copy_u8Port)
+				{
+				case DIO_u8PORTA: CLR_BIT(PORTA,Copy_u8Pin); break;
+				case DIO_u8PORTB: CLR_BIT(PORTB,Copy_u8Pin); break;
+ 562:	08 95       	ret
+				case DIO_u8PORTC: CLR_BIT(PORTC,Copy_u8Pin); break;
+ 564:	25 b3       	in	r18, 0x15	; 21
+ 566:	81 e0       	ldi	r24, 0x01	; 1
+ 568:	90 e0       	ldi	r25, 0x00	; 0
+ 56a:	02 c0       	rjmp	.+4      	; 0x570 <DIO_u8SetPinValue+0x5a>
+ 56c:	88 0f       	add	r24, r24
+ 56e:	99 1f       	adc	r25, r25
+ 570:	6a 95       	dec	r22
+ 572:	e2 f7       	brpl	.-8      	; 0x56c <DIO_u8SetPinValue+0x56>
+ 574:	80 95       	com	r24
+ 576:	82 23       	and	r24, r18
+ 578:	85 bb       	out	0x15, r24	; 21
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 57a:	80 e0       	ldi	r24, 0x00	; 0
+			{
+				switch(Copy_u8Port)
+				{
+				case DIO_u8PORTA: CLR_BIT(PORTA,Copy_u8Pin); break;
+				case DIO_u8PORTB: CLR_BIT(PORTB,Copy_u8Pin); break;
+				case DIO_u8PORTC: CLR_BIT(PORTC,Copy_u8Pin); break;
+ 57c:	08 95       	ret
+				case DIO_u8PORTD: CLR_BIT(PORTD,Copy_u8Pin); break;
+ 57e:	22 b3       	in	r18, 0x12	; 18
+ 580:	81 e0       	ldi	r24, 0x01	; 1
+ 582:	90 e0       	ldi	r25, 0x00	; 0
+ 584:	02 c0       	rjmp	.+4      	; 0x58a <DIO_u8SetPinValue+0x74>
+ 586:	88 0f       	add	r24, r24
+ 588:	99 1f       	adc	r25, r25
+ 58a:	6a 95       	dec	r22
+ 58c:	e2 f7       	brpl	.-8      	; 0x586 <DIO_u8SetPinValue+0x70>
+ 58e:	80 95       	com	r24
+ 590:	82 23       	and	r24, r18
+ 592:	82 bb       	out	0x12, r24	; 18
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 594:	80 e0       	ldi	r24, 0x00	; 0
+				switch(Copy_u8Port)
+				{
+				case DIO_u8PORTA: CLR_BIT(PORTA,Copy_u8Pin); break;
+				case DIO_u8PORTB: CLR_BIT(PORTB,Copy_u8Pin); break;
+				case DIO_u8PORTC: CLR_BIT(PORTC,Copy_u8Pin); break;
+				case DIO_u8PORTD: CLR_BIT(PORTD,Copy_u8Pin); break;
+ 596:	08 95       	ret
+				default: Local_u8ErrorState=1; break;
+
+				}
+			}
+			else if(Copy_u8Value == DIO_u8PIN_HIGH)
+ 598:	41 30       	cpi	r20, 0x01	; 1
+ 59a:	e1 f5       	brne	.+120    	; 0x614 <DIO_u8SetPinValue+0xfe>
+			{
+				switch(Copy_u8Port)
+ 59c:	81 30       	cpi	r24, 0x01	; 1
+ 59e:	91 f0       	breq	.+36     	; 0x5c4 <DIO_u8SetPinValue+0xae>
+ 5a0:	28 f0       	brcs	.+10     	; 0x5ac <DIO_u8SetPinValue+0x96>
+ 5a2:	82 30       	cpi	r24, 0x02	; 2
+ 5a4:	d9 f0       	breq	.+54     	; 0x5dc <DIO_u8SetPinValue+0xc6>
+ 5a6:	83 30       	cpi	r24, 0x03	; 3
+ 5a8:	29 f1       	breq	.+74     	; 0x5f4 <DIO_u8SetPinValue+0xde>
+ 5aa:	36 c0       	rjmp	.+108    	; 0x618 <DIO_u8SetPinValue+0x102>
+							{
+							case DIO_u8PORTA: SET_BIT(PORTA,Copy_u8Pin); break;
+ 5ac:	2b b3       	in	r18, 0x1b	; 27
+ 5ae:	81 e0       	ldi	r24, 0x01	; 1
+ 5b0:	90 e0       	ldi	r25, 0x00	; 0
+ 5b2:	02 c0       	rjmp	.+4      	; 0x5b8 <DIO_u8SetPinValue+0xa2>
+ 5b4:	88 0f       	add	r24, r24
+ 5b6:	99 1f       	adc	r25, r25
+ 5b8:	6a 95       	dec	r22
+ 5ba:	e2 f7       	brpl	.-8      	; 0x5b4 <DIO_u8SetPinValue+0x9e>
+ 5bc:	82 2b       	or	r24, r18
+ 5be:	8b bb       	out	0x1b, r24	; 27
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 5c0:	80 e0       	ldi	r24, 0x00	; 0
+			}
+			else if(Copy_u8Value == DIO_u8PIN_HIGH)
+			{
+				switch(Copy_u8Port)
+							{
+							case DIO_u8PORTA: SET_BIT(PORTA,Copy_u8Pin); break;
+ 5c2:	08 95       	ret
+							case DIO_u8PORTB: SET_BIT(PORTB,Copy_u8Pin); break;
+ 5c4:	28 b3       	in	r18, 0x18	; 24
+ 5c6:	81 e0       	ldi	r24, 0x01	; 1
+ 5c8:	90 e0       	ldi	r25, 0x00	; 0
+ 5ca:	02 c0       	rjmp	.+4      	; 0x5d0 <DIO_u8SetPinValue+0xba>
+ 5cc:	88 0f       	add	r24, r24
+ 5ce:	99 1f       	adc	r25, r25
+ 5d0:	6a 95       	dec	r22
+ 5d2:	e2 f7       	brpl	.-8      	; 0x5cc <DIO_u8SetPinValue+0xb6>
+ 5d4:	82 2b       	or	r24, r18
+ 5d6:	88 bb       	out	0x18, r24	; 24
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 5d8:	80 e0       	ldi	r24, 0x00	; 0
+			else if(Copy_u8Value == DIO_u8PIN_HIGH)
+			{
+				switch(Copy_u8Port)
+							{
+							case DIO_u8PORTA: SET_BIT(PORTA,Copy_u8Pin); break;
+							case DIO_u8PORTB: SET_BIT(PORTB,Copy_u8Pin); break;
+ 5da:	08 95       	ret
+							case DIO_u8PORTC: SET_BIT(PORTC,Copy_u8Pin); break;
+ 5dc:	25 b3       	in	r18, 0x15	; 21
+ 5de:	81 e0       	ldi	r24, 0x01	; 1
+ 5e0:	90 e0       	ldi	r25, 0x00	; 0
+ 5e2:	02 c0       	rjmp	.+4      	; 0x5e8 <DIO_u8SetPinValue+0xd2>
+ 5e4:	88 0f       	add	r24, r24
+ 5e6:	99 1f       	adc	r25, r25
+ 5e8:	6a 95       	dec	r22
+ 5ea:	e2 f7       	brpl	.-8      	; 0x5e4 <DIO_u8SetPinValue+0xce>
+ 5ec:	82 2b       	or	r24, r18
+ 5ee:	85 bb       	out	0x15, r24	; 21
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 5f0:	80 e0       	ldi	r24, 0x00	; 0
+			{
+				switch(Copy_u8Port)
+							{
+							case DIO_u8PORTA: SET_BIT(PORTA,Copy_u8Pin); break;
+							case DIO_u8PORTB: SET_BIT(PORTB,Copy_u8Pin); break;
+							case DIO_u8PORTC: SET_BIT(PORTC,Copy_u8Pin); break;
+ 5f2:	08 95       	ret
+							case DIO_u8PORTD: SET_BIT(PORTD,Copy_u8Pin); break;
+ 5f4:	22 b3       	in	r18, 0x12	; 18
+ 5f6:	81 e0       	ldi	r24, 0x01	; 1
+ 5f8:	90 e0       	ldi	r25, 0x00	; 0
+ 5fa:	02 c0       	rjmp	.+4      	; 0x600 <DIO_u8SetPinValue+0xea>
+ 5fc:	88 0f       	add	r24, r24
+ 5fe:	99 1f       	adc	r25, r25
+ 600:	6a 95       	dec	r22
+ 602:	e2 f7       	brpl	.-8      	; 0x5fc <DIO_u8SetPinValue+0xe6>
+ 604:	82 2b       	or	r24, r18
+ 606:	82 bb       	out	0x12, r24	; 18
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 608:	80 e0       	ldi	r24, 0x00	; 0
+				switch(Copy_u8Port)
+							{
+							case DIO_u8PORTA: SET_BIT(PORTA,Copy_u8Pin); break;
+							case DIO_u8PORTB: SET_BIT(PORTB,Copy_u8Pin); break;
+							case DIO_u8PORTC: SET_BIT(PORTC,Copy_u8Pin); break;
+							case DIO_u8PORTD: SET_BIT(PORTD,Copy_u8Pin); break;
+ 60a:	08 95       	ret
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 60c:	80 e0       	ldi	r24, 0x00	; 0
+ 60e:	08 95       	ret
+				{
+				case DIO_u8PORTA: CLR_BIT(PORTA,Copy_u8Pin); break;
+				case DIO_u8PORTB: CLR_BIT(PORTB,Copy_u8Pin); break;
+				case DIO_u8PORTC: CLR_BIT(PORTC,Copy_u8Pin); break;
+				case DIO_u8PORTD: CLR_BIT(PORTD,Copy_u8Pin); break;
+				default: Local_u8ErrorState=1; break;
+ 610:	81 e0       	ldi	r24, 0x01	; 1
+ 612:	08 95       	ret
+	return Local_u8ErrorState;
+}
+/*Set pin value High or Low*/
+u8 DIO_u8SetPinValue(u8 Copy_u8Port, u8 Copy_u8Pin, u8 Copy_u8Value)
+{
+	u8 Local_u8ErrorState=0;
+ 614:	80 e0       	ldi	r24, 0x00	; 0
+ 616:	08 95       	ret
+							{
+							case DIO_u8PORTA: SET_BIT(PORTA,Copy_u8Pin); break;
+							case DIO_u8PORTB: SET_BIT(PORTB,Copy_u8Pin); break;
+							case DIO_u8PORTC: SET_BIT(PORTC,Copy_u8Pin); break;
+							case DIO_u8PORTD: SET_BIT(PORTD,Copy_u8Pin); break;
+							default: Local_u8ErrorState=1; break;
+ 618:	81 e0       	ldi	r24, 0x01	; 1
+			}
+
+}
+	return Local_u8ErrorState;
+
+}
+ 61a:	08 95       	ret
+
+0000061c <EXTI_voidINT0Init>:
+#elif INT0_SENSE == FALLING_EDGE
+	CLR_BIT(MCUCR,MCUCR_ISC00);
+	SET_BIT(MCUCR,MCUCR_ISC01);
+
+#elif INT0_SENSE == RISING_EDGE
+	SET_BIT(MCUCR,MCUCR_ISC00);
+ 61c:	85 b7       	in	r24, 0x35	; 53
+ 61e:	81 60       	ori	r24, 0x01	; 1
+ 620:	85 bf       	out	0x35, r24	; 53
+	SET_BIT(MCUCR,MCUCR_ISC01);
+ 622:	85 b7       	in	r24, 0x35	; 53
+ 624:	82 60       	ori	r24, 0x02	; 2
+ 626:	85 bf       	out	0x35, r24	; 53
+#error "wrong INT0_SENSE configuration option"
+#endif
+	/*Check peripheral interrupt enable initial state */
+
+#if INT0_INITIAL_STATE == ENABLE
+	SET_BIT(GICR,GICR_INT0);
+ 628:	8b b7       	in	r24, 0x3b	; 59
+ 62a:	80 64       	ori	r24, 0x40	; 64
+ 62c:	8b bf       	out	0x3b, r24	; 59
+ 62e:	08 95       	ret
+
+00000630 <EXTI_u8INT0SetCallBack>:
+*/
+/*Call back function to send the address for the required ISR function to be executed in case of interrupt happened*/
+u8 EXTI_u8INT0SetCallBack(void (*Copy_pvINT0Func)(void))
+{
+	u8 Local_u8ErrorStatus=OK;
+	if(Copy_pvINT0Func != NULL)
+ 630:	00 97       	sbiw	r24, 0x00	; 0
+ 632:	31 f0       	breq	.+12     	; 0x640 <EXTI_u8INT0SetCallBack+0x10>
+	{
+		EXTI_pvINT0Func=Copy_pvINT0Func;
+ 634:	90 93 62 00 	sts	0x0062, r25	; 0x800062 <EXTI_pvINT0Func+0x1>
+ 638:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <EXTI_pvINT0Func>
+}
+*/
+/*Call back function to send the address for the required ISR function to be executed in case of interrupt happened*/
+u8 EXTI_u8INT0SetCallBack(void (*Copy_pvINT0Func)(void))
+{
+	u8 Local_u8ErrorStatus=OK;
+ 63c:	80 e0       	ldi	r24, 0x00	; 0
+ 63e:	08 95       	ret
+	{
+		EXTI_pvINT0Func=Copy_pvINT0Func;
+	}
+	else
+	{
+		Local_u8ErrorStatus = NULL_Pointer;
+ 640:	82 e0       	ldi	r24, 0x02	; 2
+	}
+
+	return Local_u8ErrorStatus;
+}
+ 642:	08 95       	ret
+
+00000644 <__vector_1>:
+
+/*ISR OF INT0*/
+
+void __vector_1 (void)  __attribute__((signal));
+void __vector_1 (void)
+{
+ 644:	1f 92       	push	r1
+ 646:	0f 92       	push	r0
+ 648:	0f b6       	in	r0, 0x3f	; 63
+ 64a:	0f 92       	push	r0
+ 64c:	11 24       	eor	r1, r1
+ 64e:	2f 93       	push	r18
+ 650:	3f 93       	push	r19
+ 652:	4f 93       	push	r20
+ 654:	5f 93       	push	r21
+ 656:	6f 93       	push	r22
+ 658:	7f 93       	push	r23
+ 65a:	8f 93       	push	r24
+ 65c:	9f 93       	push	r25
+ 65e:	af 93       	push	r26
+ 660:	bf 93       	push	r27
+ 662:	ef 93       	push	r30
+ 664:	ff 93       	push	r31
+	if(EXTI_pvINT0Func != NULL)
+ 666:	e0 91 61 00 	lds	r30, 0x0061	; 0x800061 <EXTI_pvINT0Func>
+ 66a:	f0 91 62 00 	lds	r31, 0x0062	; 0x800062 <EXTI_pvINT0Func+0x1>
+ 66e:	30 97       	sbiw	r30, 0x00	; 0
+ 670:	09 f0       	breq	.+2      	; 0x674 <__vector_1+0x30>
+	{
+		EXTI_pvINT0Func();
+ 672:	09 95       	icall
+	}
+	else
+	{
+		/*Stop*/
+	}
+}
+ 674:	ff 91       	pop	r31
+ 676:	ef 91       	pop	r30
+ 678:	bf 91       	pop	r27
+ 67a:	af 91       	pop	r26
+ 67c:	9f 91       	pop	r25
+ 67e:	8f 91       	pop	r24
+ 680:	7f 91       	pop	r23
+ 682:	6f 91       	pop	r22
+ 684:	5f 91       	pop	r21
+ 686:	4f 91       	pop	r20
+ 688:	3f 91       	pop	r19
+ 68a:	2f 91       	pop	r18
+ 68c:	0f 90       	pop	r0
+ 68e:	0f be       	out	0x3f, r0	; 63
+ 690:	0f 90       	pop	r0
+ 692:	1f 90       	pop	r1
+ 694:	18 95       	reti
+
+00000696 <GIE_voidEnable>:
+#include "GIE_Register.h"
+/*Global interrupt enable function by setting the SREG_I bit*/
+void GIE_voidEnable(void)
+{
+	//Enable GIE for External interrupt
+	SET_BIT(SREG,SREG_I);
+ 696:	8f b7       	in	r24, 0x3f	; 63
+ 698:	80 68       	ori	r24, 0x80	; 128
+ 69a:	8f bf       	out	0x3f, r24	; 63
+ 69c:	08 95       	ret
+
+0000069e <Timer_Init>:
+#include"Register.h"
+/*Function to select timer mode and set initial value for counter and select prescaller*/
+void Timer_Init(void)
+{
+	/*Select Normal mode for timer0*/
+	CLR_BIT(TCCR0,TCCR0_WGM00);
+ 69e:	83 b7       	in	r24, 0x33	; 51
+ 6a0:	8f 7b       	andi	r24, 0xBF	; 191
+ 6a2:	83 bf       	out	0x33, r24	; 51
+	CLR_BIT(TCCR0,TCCR0_WGM01);
+ 6a4:	83 b7       	in	r24, 0x33	; 51
+ 6a6:	87 7f       	andi	r24, 0xF7	; 247
+ 6a8:	83 bf       	out	0x33, r24	; 51
+	/*Set Timer Initial value*/
+	TCNT0 = 0x00;
+ 6aa:	12 be       	out	0x32, r1	; 50
+	/*Set PRE-SCALLER To 1024 to  start timer */
+	SET_BIT(TCCR0,TCCR0_CS00);
+ 6ac:	83 b7       	in	r24, 0x33	; 51
+ 6ae:	81 60       	ori	r24, 0x01	; 1
+ 6b0:	83 bf       	out	0x33, r24	; 51
+	CLR_BIT(TCCR0,TCCR0_CS01);
+ 6b2:	83 b7       	in	r24, 0x33	; 51
+ 6b4:	8d 7f       	andi	r24, 0xFD	; 253
+ 6b6:	83 bf       	out	0x33, r24	; 51
+	SET_BIT(TCCR0,TCCR0_CS02);
+ 6b8:	83 b7       	in	r24, 0x33	; 51
+ 6ba:	84 60       	ori	r24, 0x04	; 4
+ 6bc:	83 bf       	out	0x33, r24	; 51
+ 6be:	08 95       	ret
+
+000006c0 <Timer_delay>:
+/*function used to set the required delay according to the program process*/
+void Timer_delay(u8 delay_time)
+{
+	u8 Number_of_over_flows=0;
+	u8 counter=0;
+	if(delay_time == 5)
+ 6c0:	85 30       	cpi	r24, 0x05	; 5
+ 6c2:	71 f4       	brne	.+28     	; 0x6e0 <Timer_delay+0x20>
+	{
+		/*after calculations for timer max delay and required delay the number of overflows = 20*/
+		Number_of_over_flows=20;
+		/*start timer*/
+		/*the initial value where timer start count at each time in overflows = 255*/
+		TCNT0 = 255;
+ 6c4:	8f ef       	ldi	r24, 0xFF	; 255
+ 6c6:	82 bf       	out	0x32, r24	; 50
+}
+/*function used to set the required delay according to the program process*/
+void Timer_delay(u8 delay_time)
+{
+	u8 Number_of_over_flows=0;
+	u8 counter=0;
+ 6c8:	90 e0       	ldi	r25, 0x00	; 0
+		Number_of_over_flows=20;
+		/*start timer*/
+		/*the initial value where timer start count at each time in overflows = 255*/
+		TCNT0 = 255;
+		
+		while(counter < Number_of_over_flows)
+ 6ca:	07 c0       	rjmp	.+14     	; 0x6da <Timer_delay+0x1a>
+		{
+			while((TIFR & (1<<0))==0)
+ 6cc:	08 b6       	in	r0, 0x38	; 56
+ 6ce:	00 fe       	sbrs	r0, 0
+ 6d0:	fd cf       	rjmp	.-6      	; 0x6cc <Timer_delay+0xc>
+			{
+			/*WAIT FOR FLAG*/
+			}
+			/*Clear flag by writing one in it*/
+			SET_BIT(TIFR,TIFR_TOV0);
+ 6d2:	88 b7       	in	r24, 0x38	; 56
+ 6d4:	81 60       	ori	r24, 0x01	; 1
+ 6d6:	88 bf       	out	0x38, r24	; 56
+			counter++;
+ 6d8:	9f 5f       	subi	r25, 0xFF	; 255
+		Number_of_over_flows=20;
+		/*start timer*/
+		/*the initial value where timer start count at each time in overflows = 255*/
+		TCNT0 = 255;
+		
+		while(counter < Number_of_over_flows)
+ 6da:	94 31       	cpi	r25, 0x14	; 20
+ 6dc:	b8 f3       	brcs	.-18     	; 0x6cc <Timer_delay+0xc>
+ 6de:	08 95       	ret
+			/*Clear flag by writing one in it*/
+			SET_BIT(TIFR,TIFR_TOV0);
+			counter++;
+		}
+	}
+	else if(delay_time == 1)
+ 6e0:	81 30       	cpi	r24, 0x01	; 1
+ 6e2:	69 f4       	brne	.+26     	; 0x6fe <Timer_delay+0x3e>
+	{
+		/*after calculations for timer max delay and required delay the number of overflows = 4*/
+		Number_of_over_flows=4;
+		/*start timer*/
+		/*the initial value where timer start count at each time in overflows = 255*/
+		TCNT0 = 255;
+ 6e4:	8f ef       	ldi	r24, 0xFF	; 255
+ 6e6:	82 bf       	out	0x32, r24	; 50
+}
+/*function used to set the required delay according to the program process*/
+void Timer_delay(u8 delay_time)
+{
+	u8 Number_of_over_flows=0;
+	u8 counter=0;
+ 6e8:	90 e0       	ldi	r25, 0x00	; 0
+		Number_of_over_flows=4;
+		/*start timer*/
+		/*the initial value where timer start count at each time in overflows = 255*/
+		TCNT0 = 255;
+		
+		while(counter < Number_of_over_flows)
+ 6ea:	07 c0       	rjmp	.+14     	; 0x6fa <Timer_delay+0x3a>
+		{
+			while((TIFR & (1<<0))==0)
+ 6ec:	08 b6       	in	r0, 0x38	; 56
+ 6ee:	00 fe       	sbrs	r0, 0
+ 6f0:	fd cf       	rjmp	.-6      	; 0x6ec <Timer_delay+0x2c>
+			{
+				/*WAIT FOR FLAG*/
+			}
+			/*Clear flag by writing one in it*/
+			SET_BIT(TIFR,TIFR_TOV0);
+ 6f2:	88 b7       	in	r24, 0x38	; 56
+ 6f4:	81 60       	ori	r24, 0x01	; 1
+ 6f6:	88 bf       	out	0x38, r24	; 56
+			counter++;
+ 6f8:	9f 5f       	subi	r25, 0xFF	; 255
+		Number_of_over_flows=4;
+		/*start timer*/
+		/*the initial value where timer start count at each time in overflows = 255*/
+		TCNT0 = 255;
+		
+		while(counter < Number_of_over_flows)
+ 6fa:	94 30       	cpi	r25, 0x04	; 4
+ 6fc:	b8 f3       	brcs	.-18     	; 0x6ec <Timer_delay+0x2c>
+ 6fe:	08 95       	ret
+
+00000700 <_exit>:
+ 700:	f8 94       	cli
+
+00000702 <__stop_program>:
+ 702:	ff cf       	rjmp	.-2      	; 0x702 <__stop_program>
